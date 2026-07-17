@@ -166,15 +166,13 @@ export function LandingPage() {
               {/* Glow behind logo */}
               <div className="absolute inset-0 -m-4 rounded-full bg-brand-gradient opacity-30 blur-2xl animate-pulse-glow" />
 
-              {/* Logo container */}
+              {/* Logo - transparent, no background or container */}
               <div className="relative animate-float">
-                <div className="relative rounded-3xl bg-card p-6 shadow-2xl ring-1 ring-border/50 md:p-8">
-                  <img
-                    src="/logo.png"
-                    alt="بكالوريا بيه - منصة التعليم المصرية"
-                    className="h-32 w-32 rounded-2xl object-contain sm:h-40 sm:w-40 md:h-48 md:w-48"
-                  />
-                </div>
+                <img
+                  src="/logo.png"
+                  alt="بكالوريا بيه - منصة التعليم المصرية"
+                  className="h-40 w-40 object-contain drop-shadow-2xl sm:h-48 sm:w-48 md:h-56 md:w-56 lg:h-64 lg:w-64"
+                />
 
                 {/* Floating sparkles around logo */}
                 <Sparkles className="absolute -top-3 -right-3 h-6 w-6 text-amber-400 animate-bounce-subtle" />
