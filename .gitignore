@@ -100,3 +100,4 @@ worklog.md
 
 # Caddy config (internal)
 Caddyfile
+/upload/
