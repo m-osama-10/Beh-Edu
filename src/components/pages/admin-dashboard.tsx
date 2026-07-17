@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouterStore } from "@/store/router-store";
 import { useAuthStore } from "@/store/auth-store";
 import { COURSES, TEACHERS, USERS_MOCK, REVENUE_DATA, ENROLLMENT_BY_SUBJECT, PLATFORM_STATS, formatPrice, formatNumber, formatRelativeTime } from "@/data/mock-data";
@@ -30,6 +30,7 @@ import {
   Shield,
   AlertCircle,
   Check,
+  Loader2,
 } from "lucide-react";
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -49,12 +50,36 @@ const NAV = [
 
 export function AdminDashboard() {
   const navigate = useRouterStore((s) => s.navigate);
-  const { user } = useAuthStore();
+  const { user, isHydrated } = useAuthStore();
   const [activeTab, setActiveTab] = useState("overview");
   const [search, setSearch] = useState("");
 
-  if (!user) {
-    navigate("login");
+  // Wait for auth hydration + role guard
+  useEffect(() => {
+    if (!isHydrated) return;
+    if (!user) {
+      navigate("login");
+      return;
+    }
+    if (user.role !== "ADMIN") {
+      // Redirect non-admins to their proper dashboard
+      navigate(user.role === "TEACHER" ? "teacher-dashboard" : "student-dashboard");
+      return;
+    }
+  }, [isHydrated, user, navigate]);
+
+  if (!isHydrated) {
+    return (
+      <div className="container mx-auto flex min-h-[60vh] items-center justify-center px-4 py-8">
+        <div className="text-center">
+          <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
+          <p className="mt-2 text-sm text-muted-foreground">جاري التحميل...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || user.role !== "ADMIN") {
     return null;
   }
 

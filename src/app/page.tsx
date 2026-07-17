@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouterStore } from "@/store/router-store";
+import { useAuthStore } from "@/store/auth-store";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
@@ -23,6 +25,38 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Home() {
   const route = useRouterStore((s) => s.route);
+  const navigate = useRouterStore((s) => s.navigate);
+  const { user, isHydrated, hydrate } = useAuthStore();
+
+  // Hydrate auth state on mount
+  useEffect(() => {
+    if (!isHydrated) {
+      hydrate();
+    }
+  }, [isHydrated, hydrate]);
+
+  // Role-based route guards: redirect to correct dashboard if wrong role
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const dashboardRoutes = ["student-dashboard", "teacher-dashboard", "admin-dashboard"];
+    if (!dashboardRoutes.includes(route.name)) return;
+
+    // If not logged in, redirect to login
+    if (!user) {
+      navigate("login");
+      return;
+    }
+
+    // If logged in but wrong dashboard for the role
+    if (user.role === "ADMIN" && route.name !== "admin-dashboard") {
+      navigate("admin-dashboard");
+    } else if (user.role === "TEACHER" && route.name !== "teacher-dashboard") {
+      navigate("teacher-dashboard");
+    } else if (user.role === "STUDENT" && route.name !== "student-dashboard") {
+      navigate("student-dashboard");
+    }
+  }, [isHydrated, user, route.name, navigate]);
 
   const renderPage = () => {
     switch (route.name) {

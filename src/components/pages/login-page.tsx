@@ -28,17 +28,17 @@ export function LoginPage() {
     setIsLoading(false);
     if (result.success) {
       toast.success("مرحباً بعودتك! 👋");
-      const role = email.toLowerCase().includes("admin") ? "admin-dashboard"
-        : email.toLowerCase().includes("teacher") ? "teacher-dashboard"
-        : "student-dashboard";
-      navigate(role as "admin-dashboard" | "teacher-dashboard" | "student-dashboard");
+      // Use the redirect target returned by the API
+      navigate(result.redirectTo as "admin-dashboard" | "teacher-dashboard" | "student-dashboard");
     } else {
       toast.error(result.error ?? "فشل تسجيل الدخول");
     }
   };
 
-  const handleDemoLogin = (role: "ADMIN" | "TEACHER" | "STUDENT") => {
-    loginAs(role);
+  const handleDemoLogin = async (role: "ADMIN" | "TEACHER" | "STUDENT") => {
+    setIsLoading(true);
+    await loginAs(role);
+    setIsLoading(false);
     toast.success("تم تسجيل الدخول كحساب تجريبي");
     const target = role === "ADMIN" ? "admin-dashboard" : role === "TEACHER" ? "teacher-dashboard" : "student-dashboard";
     navigate(target);

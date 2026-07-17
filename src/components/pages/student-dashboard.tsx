@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouterStore } from "@/store/router-store";
 import { useAuthStore } from "@/store/auth-store";
 import { useSettingsStore, useFavoritesStore, useEnrolledStore, useWatchProgressStore } from "@/store/app-stores";
@@ -35,6 +35,7 @@ import {
   Phone,
   MapPin,
   Calendar,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -49,7 +50,7 @@ const NAV = [
 
 export function StudentDashboard() {
   const navigate = useRouterStore((s) => s.navigate);
-  const { user } = useAuthStore();
+  const { user, isHydrated } = useAuthStore();
   const { dataSaverMode, toggleDataSaver } = useSettingsStore();
   const favorites = useFavoritesStore((s) => s.favorites);
   const enrolled = useEnrolledStore((s) => s.enrolled);
@@ -58,8 +59,31 @@ export function StudentDashboard() {
 
   const [activeTab, setActiveTab] = useState("overview");
 
-  if (!user) {
-    navigate("login");
+  // Wait for auth hydration
+  useEffect(() => {
+    if (!isHydrated) return;
+    if (!user) {
+      navigate("login");
+      return;
+    }
+    if (user.role !== "STUDENT" && user.role !== "ADMIN") {
+      navigate("teacher-dashboard");
+      return;
+    }
+  }, [isHydrated, user, navigate]);
+
+  if (!isHydrated) {
+    return (
+      <div className="container mx-auto flex min-h-[60vh] items-center justify-center px-4 py-8">
+        <div className="text-center">
+          <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
+          <p className="mt-2 text-sm text-muted-foreground">جاري التحميل...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || (user.role !== "STUDENT" && user.role !== "ADMIN")) {
     return null;
   }
 

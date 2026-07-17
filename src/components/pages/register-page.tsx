@@ -45,11 +45,14 @@ export function RegisterPage() {
       return;
     }
     setIsLoading(true);
-    const result = await register({ name, email, password, role });
+    const result = await register({ name, email, password, role, phone, gradeId: role === "STUDENT" ? gradeId : undefined });
     setIsLoading(false);
     if (result.success) {
-      toast.success(role === "TEACHER" ? "تم إنشاء حسابك! سيتم مراجعة طلبك من الإدارة" : "أهلاً بك في بكالوريا بيه! 🎉");
-      navigate(role === "TEACHER" ? "teacher-dashboard" : "student-dashboard");
+      toast.success(role === "TEACHER" ? "تم إنشاء حسابك! أهلاً بك في بكالوريا بيه 🎉" : "أهلاً بك في بكالوريا بيه! 🎉");
+      // Redirect to the correct dashboard based on role
+      navigate(result.redirectTo as "teacher-dashboard" | "student-dashboard");
+    } else {
+      toast.error(result.error ?? "فشل إنشاء الحساب");
     }
   };
 
