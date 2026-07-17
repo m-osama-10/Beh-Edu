@@ -1,0 +1,507 @@
+// Prisma schema for بكالوريا بيه platform
+// Egyptian educational SaaS - SQLite for local dev (PostgreSQL-compatible)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============ AUTH & USERS ============
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  name          String
+  phone         String?
+  role          UserRole @default(STUDENT)
+  avatarUrl     String?
+  emailVerified DateTime?
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  profile       Profile?
+  teacher       Teacher?
+  student       Student?
+  enrollments   Enrollment[]
+  payments      Payment[]
+  reviews       Review[]
+  favorites     Favorite[]
+  notifications Notification[]
+  watchProgress WatchProgress[]
+  certificates  Certificate[]
+  announcements Announcement[]
+}
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum UserStatus {
+  ACTIVE
+  PENDING
+  SUSPENDED
+  BANNED
+}
+
+model Profile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio       String?
+  city      String?
+  country   String   @default("مصر")
+  facebook  String?
+  whatsapp  String?
+  birthDate DateTime?
+  gender    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============ TEACHERS ============
+
+model Teacher {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title           String?  // أ. / د. / م.
+  bio             String?
+  specialization  String?
+  yearsExperience Int?
+  education       String?  // المؤهل العلمي
+  verified        Boolean  @default(false)
+  approved        Boolean  @default(false)
+  rating          Float    @default(0)
+  totalStudents   Int      @default(0)
+  totalCourses    Int      @default(0)
+  totalRevenue    Float    @default(0)
+  paypalAccount   String?
+  bankAccount     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  courses       Course[]
+  announcements Announcement[]
+}
+
+// ============ STUDENTS ============
+
+model Student {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gradeId       String?
+  grade         Grade?   @relation(fields: [gradeId], references: [id])
+  schoolName    String?
+  targetYear    String?  // السنة الدراسية المستهدفة
+  totalSpent    Float    @default(0)
+  totalCourses  Int      @default(0)
+  completedCourses Int   @default(0)
+  dataSaverMode Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  enrollments   Enrollment[]
+  watchProgress WatchProgress[]
+  certificates  Certificate[]
+  favorites     Favorite[]
+}
+
+// ============ SUBJECTS & GRADES ============
+
+model Subject {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  nameEn      String?
+  icon        String?
+  color       String?  // hex color for UI
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  courses     Course[]
+}
+
+model Grade {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  nameEn    String?
+  level     Int      // 1 = أولى ثانوي ... 3 = ثالثة ثانوي
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+
+  students  Student[]
+  courses   Course[]
+}
+
+// ============ COURSES ============
+
+model Course {
+  id            String   @id @default(cuid())
+  teacherId     String
+  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  subjectId     String
+  subject       Subject  @relation(fields: [subjectId], references: [id])
+  gradeId       String?
+  grade         Grade?   @relation(fields: [gradeId], references: [id])
+  title         String
+  slug          String   @unique
+  description   String
+  coverImageUrl String?
+  previewVideoUrl String?
+  price         Float    @default(0)
+  discountPrice Float?
+  discountUntil DateTime?
+  level         CourseLevel @default(BEGINNER)
+  academicYear  String?  // 2024/2025
+  language      String   @default("العربية")
+  isPublished   Boolean  @default(false)
+  isFeatured    Boolean  @default(false)
+  views         Int      @default(0)
+  rating        Float    @default(0)
+  ratingCount   Int      @default(0)
+  studentCount  Int      @default(0)
+  totalLessons  Int      @default(0)
+  totalDuration Int      @default(0) // seconds
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sections      Section[]
+  enrollments   Enrollment[]
+  reviews       Review[]
+  favorites     Favorite[]
+  certificates  Certificate[]
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  ALL_LEVELS
+}
+
+// ============ COURSE CONTENT ============
+
+model Section {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  lessons     Lesson[]
+}
+
+model Lesson {
+  id          String   @id @default(cuid())
+  sectionId   String
+  section     Section  @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  sortOrder   Int      @default(0)
+  duration    Int      @default(0) // seconds
+  isPreview   Boolean  @default(false) // free preview
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  video       Video?
+  attachments LessonAttachment[]
+  quizzes     Quiz[]
+  watchProgress WatchProgress[]
+}
+
+model Video {
+  id            String   @id @default(cuid())
+  lessonId      String   @unique
+  lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  originalUrl   String?
+  r2Key         String?  // R2 storage key
+  hlsPlaylistUrl String? // .m3u8
+  status        VideoStatus @default(UPLOADED)
+  duration480p  Int?     // seconds
+  duration720p  Int?
+  size480p      Int?     // bytes
+  size720p      Int?
+  encryptionKey String? // HLS encryption key (hex)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  processingJobs VideoProcessingJob[]
+}
+
+enum VideoStatus {
+  UPLOADED
+  PROCESSING
+  READY
+  FAILED
+}
+
+model VideoProcessingJob {
+  id          String   @id @default(cuid())
+  videoId     String
+  video       Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  type        JobType
+  status      JobStatus @default(QUEUED)
+  progress    Int      @default(0) // 0-100
+  error       String?
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+}
+
+enum JobType {
+  TRANSCODE_480P
+  TRANSCODE_720P
+  HLS_PACKAGE
+  ENCRYPT
+  THUMBNAIL
+}
+
+enum JobStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model LessonAttachment {
+  id        String   @id @default(cuid())
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  fileName  String
+  fileUrl   String
+  fileType  String   // pdf, docx, etc.
+  fileSize  Int      // bytes
+  isDownloadable Boolean @default(true)
+  createdAt DateTime @default(now())
+}
+
+// ============ ENROLLMENTS & PAYMENTS ============
+
+model Enrollment {
+  id         String   @id @default(cuid())
+  studentId  String
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId     String
+  paymentId  String?
+  pricePaid  Float    @default(0)
+  progress   Float    @default(0) // 0-100
+  completedLessons Int @default(0)
+  lastWatchedLessonId String?
+  enrolledAt DateTime @default(now())
+  completedAt DateTime?
+  isActive   Boolean  @default(true)
+
+  @@unique([studentId, courseId])
+}
+
+model Payment {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  enrollmentId String?
+  enrollment   Enrollment? @relation(fields: [enrollmentId], references: [id])
+  amount       Float
+  currency     String   @default("EGP")
+  method       PaymentMethod
+  status       PaymentStatus @default(PENDING)
+  providerRef  String?  // provider transaction id
+  teacherShare Float?   // revenue share
+  platformFee  Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum PaymentMethod {
+  VODAFONE_CASH
+  ETISALAT_CASH
+  ORANGE_CASH
+  FAWRY
+  CARD
+  INSTAPAY
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// ============ WATCH PROGRESS ============
+
+model WatchProgress {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  lessonId        String
+  lesson          Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  position        Int      @default(0) // seconds
+  duration        Int      @default(0) // seconds
+  watchedSeconds  Int      @default(0)
+  dataConsumedMB  Float    @default(0)
+  quality         String   @default("480p")
+  completed       Boolean  @default(false)
+  lastWatchedAt   DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, lessonId])
+}
+
+// ============ QUIZZES & QUESTIONS ============
+
+model Quiz {
+  id          String   @id @default(cuid())
+  lessonId    String
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  passingScore Int     @default(60)
+  timeLimit   Int?     // minutes
+  attempts    Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  questions   Question[]
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  quizId      String
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text        String
+  type        QuestionType @default(SINGLE_CHOICE)
+  points      Int      @default(1)
+  explanation String?
+  sortOrder   Int      @default(0)
+
+  answers     Answer[]
+}
+
+enum QuestionType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  TEXT
+}
+
+model Answer {
+  id          String   @id @default(cuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text        String
+  isCorrect   Boolean  @default(false)
+  sortOrder   Int      @default(0)
+}
+
+// ============ REVIEWS & FAVORITES ============
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  rating    Int      // 1-5
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, courseId])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, courseId])
+}
+
+// ============ CERTIFICATES & NOTIFICATIONS ============
+
+model Certificate {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  studentId    String
+  student      Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  courseId     String
+  course       Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  certificateNumber String @unique
+  finalScore   Float
+  issuedAt     DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      NotificationType
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  ANNOUNCEMENT
+  LESSON
+  PAYMENT
+  CERTIFICATE
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  teacherId String?
+  teacher   Teacher? @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  courseId   String?
+  title     String
+  content   String
+  isPinned  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Subscription {
+  id           String   @id @default(cuid())
+  userId       String
+  plan         SubscriptionPlan
+  status       String   @default("ACTIVE")
+  startDate    DateTime @default(now())
+  endDate      DateTime
+  amount       Float
+  autoRenew    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+enum SubscriptionPlan {
+  MONTHLY
+  QUARTERLY
+  SEMESTER
+  YEARLY
+}

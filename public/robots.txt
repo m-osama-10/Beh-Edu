@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin-dashboard
+Disallow: /teacher-dashboard
+Disallow: /student-dashboard
+Disallow: /watch
+Disallow: /favorites
+Disallow: /notifications
+Disallow: /certificates
+
+Sitemap: https://bakaloriaa-bey.com/sitemap.xml
