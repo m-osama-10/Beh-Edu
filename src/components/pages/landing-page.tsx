@@ -142,130 +142,132 @@ export function LandingPage() {
 
   return (
     <div className="flex flex-col">
-      {/* HERO SECTION */}
-      <section className="relative overflow-hidden bg-brand-gradient-soft hero-pattern">
-        <div className="container mx-auto px-4 py-12 md:py-20 lg:py-24">
-          <div className="grid items-center gap-8 lg:grid-cols-2">
-            <div className="text-center lg:text-right">
-              <Badge className="mb-4 bg-brand-gradient text-primary-foreground">
-                <Sparkles className="ms-1 h-3 w-3" />
-                منصة التعليم المصرية الأولى
-              </Badge>
-              <h1 className="mb-4 text-3xl font-extrabold leading-tight text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
-                تعلم بذكاء.
-                <br />
-                <span className="text-brand-gradient">تفوق بثقة.</span>
+      {/* HERO SECTION — Logo centered with animations */}
+      <section className="relative overflow-hidden hero-bg hero-pattern">
+        {/* Decorative blurred blobs */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-32 right-1/4 h-96 w-96 rounded-full bg-primary/20 blur-3xl animate-pulse-glow" />
+          <div className="absolute top-20 -left-20 h-80 w-80 rounded-full bg-accent/15 blur-3xl animate-pulse-glow" style={{ animationDelay: "1s" }} />
+          <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-amber-400/10 blur-3xl animate-pulse-glow" style={{ animationDelay: "2s" }} />
+        </div>
+
+        <div className="container relative mx-auto px-4 py-12 md:py-16 lg:py-20">
+          <div className="flex flex-col items-center text-center">
+            {/* Logo - large, centered, floating */}
+            <div className="relative mb-8 animate-fade-in-up">
+              {/* Decorative rotating rings */}
+              <div className="pointer-events-none absolute inset-0 -m-8 flex items-center justify-center">
+                <div className="h-64 w-64 rounded-full border-2 border-dashed border-primary/20 animate-spin-slow md:h-72 md:w-72" />
+              </div>
+              <div className="pointer-events-none absolute inset-0 -m-12 flex items-center justify-center">
+                <div className="h-72 w-72 rounded-full border border-accent/20 animate-spin-reverse-slow md:h-80 md:w-80" />
+              </div>
+
+              {/* Glow behind logo */}
+              <div className="absolute inset-0 -m-4 rounded-full bg-brand-gradient opacity-30 blur-2xl animate-pulse-glow" />
+
+              {/* Logo container */}
+              <div className="relative animate-float">
+                <div className="relative rounded-3xl bg-card p-6 shadow-2xl ring-1 ring-border/50 md:p-8">
+                  <img
+                    src="/logo.png"
+                    alt="بكالوريا بيه - منصة التعليم المصرية"
+                    className="h-32 w-32 rounded-2xl object-contain sm:h-40 sm:w-40 md:h-48 md:w-48"
+                  />
+                </div>
+
+                {/* Floating sparkles around logo */}
+                <Sparkles className="absolute -top-3 -right-3 h-6 w-6 text-amber-400 animate-bounce-subtle" />
+                <Sparkles className="absolute -bottom-2 -left-4 h-5 w-5 text-accent animate-bounce-subtle" style={{ animationDelay: "0.7s" }} />
+                <Award className="absolute top-1/2 -right-6 h-5 w-5 text-amber-500 animate-bounce-subtle" style={{ animationDelay: "1.4s" }} />
+              </div>
+            </div>
+
+            {/* Brand name with shimmer */}
+            <div className="animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+              <h1 className="mb-2 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+                <span className="text-shimmer">بكالوريا بيه</span>
               </h1>
-              <p className="mx-auto mb-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:mx-0">
+              <p className="mb-6 text-sm font-medium text-muted-foreground sm:text-base md:text-lg">
+                منصة التعليم المصرية الأولى لطلاب الثانوية العامة
+              </p>
+            </div>
+
+            {/* Headline */}
+            <div className="animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+              <h2 className="mb-4 text-2xl font-bold leading-tight text-foreground sm:text-3xl md:text-4xl lg:text-5xl">
+                تعلم بذكاء.
+                <span className="text-brand-gradient"> تفوق بثقة.</span>
+              </h2>
+              <p className="mx-auto mb-8 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
                 منصة بكالوريا بيه توفر لك أفضل الكورسات التعليمية لطلاب الثانوية العامة في مصر. فيديوهات محمية بتقنية تشفير HLS، خاصية توفير الباقة لتقليل استهلاك الإنترنت، ومدرسون معتمدون بخبرات طويلة. تعلم في أي وقت ومن أي مكان بأسعار تناسب كل الطلاب.
               </p>
-              <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-                <Button
-                  size="lg"
-                  className="w-full bg-brand-gradient text-base sm:w-auto"
-                  onClick={() => navigate("register")}
-                >
-                  ابدأ التعلم مجاناً
-                  <ArrowLeft className="ms-2 h-5 w-5" />
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full text-base sm:w-auto"
-                  onClick={() => navigate("courses")}
-                >
-                  <PlayCircle className="ms-2 h-5 w-5" />
-                  تصفح الكورسات
-                </Button>
-              </div>
+            </div>
 
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground sm:gap-6 lg:justify-start">
-                <div className="flex items-center gap-1">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                  بدون بطاقة ائتمان
-                </div>
-                <div className="flex items-center gap-1">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                  أكثر من 500 كورس
-                </div>
-                <div className="flex items-center gap-1">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                  دعم مصري 24/7
-                </div>
+            {/* CTAs */}
+            <div className="animate-fade-in-up flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row" style={{ animationDelay: "0.3s" }}>
+              <Button
+                size="lg"
+                className="w-full bg-brand-gradient text-base shadow-lg shadow-primary/30 transition hover:shadow-xl hover:shadow-primary/40 sm:w-auto"
+                onClick={() => navigate("register")}
+              >
+                <Sparkles className="ms-2 h-5 w-5" />
+                ابدأ التعلم مجاناً
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full text-base transition hover:bg-primary/5 sm:w-auto"
+                onClick={() => navigate("courses")}
+              >
+                <PlayCircle className="ms-2 h-5 w-5" />
+                تصفح الكورسات
+              </Button>
+            </div>
+
+            {/* Trust indicators */}
+            <div className="animate-fade-in-up mt-8 flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground sm:gap-6 sm:text-sm" style={{ animationDelay: "0.4s" }}>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                بدون بطاقة ائتمان
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                أكثر من 500 كورس
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                دعم مصري 24/7
               </div>
             </div>
 
-            {/* Hero visual */}
-            <div className="relative">
-              <div className="relative mx-auto max-w-md">
-                {/* Mockup */}
-                <div className="relative overflow-hidden rounded-2xl border-2 border-primary/20 bg-card shadow-2xl">
-                  <div className="aspect-video bg-gradient-to-br from-primary/20 via-accent/20 to-amber-500/20 p-4">
-                    <div className="flex h-full flex-col justify-between">
-                      <div className="flex items-center justify-between">
-                        <Badge className="bg-emerald-500/20 text-emerald-700 dark:text-emerald-400">
-                          <Leaf className="ms-1 h-3 w-3" />
-                          توفير الباقة مُفعّل
-                        </Badge>
-                        <Badge variant="secondary" className="bg-black/10">
-                          <Lock className="ms-1 h-3 w-3" />
-                          محتوى محمي
-                        </Badge>
-                      </div>
-                      <div className="flex flex-col items-center justify-center gap-2">
-                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-gradient shadow-lg">
-                          <PlayCircle className="h-9 w-9 text-white" />
-                        </div>
-                        <p className="text-xs font-medium text-foreground">الرياضيات - الباب الأول</p>
-                      </div>
-                      <div className="space-y-1">
-                        <div className="h-1.5 w-full rounded-full bg-black/10">
-                          <div className="h-full w-2/3 rounded-full bg-brand-gradient" />
-                        </div>
-                        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                          <span>12:30 / 27:00</span>
-                          <span className="flex items-center gap-1">
-                            <Wifi className="h-3 w-3" />
-                            85 MB
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-2 p-3">
-                    <div className="h-3 w-3/4 rounded bg-muted" />
-                    <div className="h-2 w-full rounded bg-muted/60" />
-                    <div className="h-2 w-5/6 rounded bg-muted/60" />
-                  </div>
-                </div>
-
-                {/* Floating cards */}
-                <Card className="absolute -right-4 top-12 hidden w-44 shadow-lg sm:block">
-                  <CardContent className="flex items-center gap-2 p-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-amber-100 text-amber-600 dark:bg-amber-950 dark:text-amber-400">
-                      <Award className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-foreground">شهادة معتمدة</div>
-                      <div className="text-[10px] text-muted-foreground">عند إتمام الكورس</div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="absolute -left-4 bottom-24 hidden w-44 shadow-lg sm:block">
-                  <CardContent className="flex items-center gap-2 p-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
-                      <TrendingUp className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-foreground">تتبع التقدم</div>
-                      <div className="text-[10px] text-muted-foreground">في كل درس</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+            {/* Feature pills */}
+            <div className="animate-fade-in-up mt-8 flex flex-wrap items-center justify-center gap-2" style={{ animationDelay: "0.5s" }}>
+              <Badge variant="secondary" className="gap-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+                <Leaf className="h-3 w-3" />
+                توفير الباقة
+              </Badge>
+              <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary">
+                <ShieldCheck className="h-3 w-3" />
+                فيديوهات محمية
+              </Badge>
+              <Badge variant="secondary" className="gap-1 bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400">
+                <Award className="h-3 w-3" />
+                شهادات معتمدة
+              </Badge>
+              <Badge variant="secondary" className="gap-1 bg-accent/10 text-accent">
+                <Users className="h-3 w-3" />
+                مدرسون مصريون
+              </Badge>
             </div>
           </div>
+        </div>
+
+        {/* Wave divider */}
+        <div className="relative">
+          <svg className="h-12 w-full text-background md:h-20" viewBox="0 0 1440 80" preserveAspectRatio="none" fill="currentColor">
+            <path d="M0,40 C320,80 720,0 1440,40 L1440,80 L0,80 Z" />
+          </svg>
         </div>
       </section>
 
@@ -274,18 +276,25 @@ export function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 gap-4 py-8 md:grid-cols-4">
             {[
-              { icon: Users, label: "طالب نشط", value: formatNumber(PLATFORM_STATS.totalStudents), suffix: "+" },
-              { icon: BookOpen, label: "كورس متاح", value: formatNumber(PLATFORM_STATS.totalCourses), suffix: "+" },
-              { icon: GraduationCap, label: "مدرس معتمد", value: PLATFORM_STATS.totalTeachers, suffix: "+" },
-              { icon: Star, label: "متوسط التقييم", value: PLATFORM_STATS.averageRating, suffix: "/5" },
-            ].map((stat) => (
-              <div key={stat.label} className="flex flex-col items-center text-center">
-                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-brand-gradient-soft text-primary">
-                  <stat.icon className="h-6 w-6" />
+              { icon: Users, label: "طالب نشط", value: formatNumber(PLATFORM_STATS.totalStudents), suffix: "+", color: "#1A5F7A" },
+              { icon: BookOpen, label: "كورس متاح", value: formatNumber(PLATFORM_STATS.totalCourses), suffix: "+", color: "#D62828" },
+              { icon: GraduationCap, label: "مدرس معتمد", value: PLATFORM_STATS.totalTeachers, suffix: "+", color: "#10B981" },
+              { icon: Star, label: "متوسط التقييم", value: PLATFORM_STATS.averageRating, suffix: "/5", color: "#FFD700" },
+            ].map((stat, idx) => (
+              <div
+                key={stat.label}
+                className="group flex flex-col items-center text-center transition hover:scale-105"
+                style={{ animation: `fade-in-up 0.6s ease-out ${idx * 0.1}s both` }}
+              >
+                <div
+                  className="mb-2 flex h-14 w-14 items-center justify-center rounded-2xl shadow-md transition group-hover:scale-110 group-hover:shadow-lg"
+                  style={{ backgroundColor: `${stat.color}20`, color: stat.color }}
+                >
+                  <stat.icon className="h-7 w-7" />
                 </div>
                 <div className="text-2xl font-extrabold text-foreground sm:text-3xl">
                   {stat.value}
-                  <span className="text-primary">{stat.suffix}</span>
+                  <span style={{ color: stat.color }}>{stat.suffix}</span>
                 </div>
                 <div className="mt-1 text-xs text-muted-foreground sm:text-sm">{stat.label}</div>
               </div>
@@ -342,14 +351,23 @@ export function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((feature) => (
-              <Card key={feature.title} className="card-hover overflow-hidden">
+            {FEATURES.map((feature, idx) => (
+              <Card
+                key={feature.title}
+                className="group relative overflow-hidden card-hover"
+                style={{ animation: `fade-in-up 0.6s ease-out ${idx * 0.1}s both` }}
+              >
+                {/* Top color stripe */}
+                <div
+                  className="absolute inset-x-0 top-0 h-1"
+                  style={{ background: `linear-gradient(90deg, ${feature.color}, transparent)` }}
+                />
                 <CardContent className="p-6">
                   <div
-                    className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
+                    className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl shadow-md transition group-hover:scale-110 group-hover:rotate-3"
                     style={{ backgroundColor: `${feature.color}20`, color: feature.color }}
                   >
-                    <feature.icon className="h-6 w-6" />
+                    <feature.icon className="h-7 w-7" />
                   </div>
                   <h3 className="mb-2 text-lg font-bold text-foreground">{feature.title}</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">{feature.description}</p>
@@ -515,9 +533,15 @@ export function LandingPage() {
       {/* CTA */}
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
-          <div className="relative overflow-hidden rounded-3xl bg-brand-gradient p-8 text-center text-primary-foreground md:p-16">
-            <div className="hero-pattern absolute inset-0 opacity-20" />
+          <div className="relative overflow-hidden rounded-3xl bg-brand-gradient p-8 text-center text-primary-foreground shadow-2xl shadow-primary/30 md:p-16">
+            {/* Decorative shapes */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+              <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-white/10 blur-3xl animate-pulse-glow" />
+              <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-amber-400/20 blur-3xl animate-pulse-glow" style={{ animationDelay: "1.5s" }} />
+              <div className="absolute inset-0 hero-pattern opacity-30" />
+            </div>
             <div className="relative">
+              <Sparkles className="mx-auto mb-4 h-10 w-10 text-amber-300 animate-bounce-subtle" />
               <h2 className="mb-4 text-2xl font-extrabold sm:text-3xl md:text-4xl">
                 جاهز لبدء رحلتك نحو التفوق؟
               </h2>
