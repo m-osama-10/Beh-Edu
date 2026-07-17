@@ -90,6 +90,16 @@ export function ProtectedVideoPlayer({
   // Watermark text - mix of name + email, scrambled positions
   const watermarkText = `${studentName} | ${studentEmail}`;
 
+  // Apply quality level (defined before useEffect so it can be referenced)
+  const applyQualityLevel = (hls: Hls, q: VideoQuality) => {
+    const level = LEVEL_MAP[q];
+    if (q === "AUTO") {
+      hls.currentLevel = -1;
+    } else {
+      hls.currentLevel = level;
+    }
+  };
+
   // Initialize HLS
   useEffect(() => {
     const video = videoRef.current;
@@ -156,18 +166,7 @@ export function ProtectedVideoPlayer({
         hlsRef.current = null;
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [src]);
-
-  // Apply quality level
-  const applyQualityLevel = (hls: Hls, q: VideoQuality) => {
-    const level = LEVEL_MAP[q];
-    if (q === "AUTO") {
-      hls.currentLevel = -1;
-    } else {
-      hls.currentLevel = level;
-    }
-  };
 
   const handleQualityChange = (q: VideoQuality) => {
     setQuality(q);

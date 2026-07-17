@@ -1,266 +1,478 @@
-// Prisma schema for بكالوريا بيه platform
-// Egyptian educational SaaS - SQLite for local dev (PostgreSQL-compatible)
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
-
-// ============ AUTH & USERS ============
 
 model User {
-  id            String   @id @default(cuid())
-  email         String   @unique
-  passwordHash  String
-  name          String
-  phone         String?
-  role          UserRole @default(STUDENT)
-  avatarUrl     String?
-  emailVerified DateTime?
-  status        UserStatus @default(ACTIVE)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id             String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  email          String          @unique
+  password_hash  String
+  name           String
+  phone          String?
+  role           user_role       @default(STUDENT)
+  avatar_url     String?
+  email_verified DateTime?       @db.Timestamptz(6)
+  status         user_status     @default(ACTIVE)
+  created_at     DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime        @default(now()) @db.Timestamptz(6)
+  certificates   Certificate[]
+  enrollments    Enrollment[]
+  favorites      Favorite[]
+  notifications  Notification[]
+  payments       Payment[]
+  profiles       Profile?
+  reviews        Review[]
+  students       Student?
+  subscriptions  Subscription[]
+  teachers       Teacher?
+  watch_progress WatchProgress[]
 
-  profile       Profile?
-  teacher       Teacher?
-  student       Student?
-  enrollments   Enrollment[]
-  payments      Payment[]
-  reviews       Review[]
-  favorites     Favorite[]
-  notifications Notification[]
-  watchProgress WatchProgress[]
-  certificates  Certificate[]
-  announcements Announcement[]
-}
-
-enum UserRole {
-  ADMIN
-  TEACHER
-  STUDENT
-}
-
-enum UserStatus {
-  ACTIVE
-  PENDING
-  SUSPENDED
-  BANNED
+  @@index([email], map: "idx_users_email")
+  @@index([role], map: "idx_users_role")
+  @@map("users")
 }
 
 model Profile {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  bio       String?
-  city      String?
-  country   String   @default("مصر")
-  facebook  String?
-  whatsapp  String?
-  birthDate DateTime?
-  gender    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id    String    @unique @db.Uuid
+  bio        String?
+  city       String?
+  country    String?   @default("مصر")
+  facebook   String?
+  whatsapp   String?
+  birth_date DateTime? @db.Date
+  gender     String?
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime  @default(now()) @db.Timestamptz(6)
+  users      User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("profiles")
 }
-
-// ============ TEACHERS ============
-
-model Teacher {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title           String?  // أ. / د. / م.
-  bio             String?
-  specialization  String?
-  yearsExperience Int?
-  education       String?  // المؤهل العلمي
-  verified        Boolean  @default(false)
-  approved        Boolean  @default(false)
-  rating          Float    @default(0)
-  totalStudents   Int      @default(0)
-  totalCourses    Int      @default(0)
-  totalRevenue    Float    @default(0)
-  paypalAccount   String?
-  bankAccount     String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  courses       Course[]
-  announcements Announcement[]
-}
-
-// ============ STUDENTS ============
-
-model Student {
-  id            String   @id @default(cuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  gradeId       String?
-  grade         Grade?   @relation(fields: [gradeId], references: [id])
-  schoolName    String?
-  targetYear    String?  // السنة الدراسية المستهدفة
-  totalSpent    Float    @default(0)
-  totalCourses  Int      @default(0)
-  completedCourses Int   @default(0)
-  dataSaverMode Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  enrollments   Enrollment[]
-  watchProgress WatchProgress[]
-  certificates  Certificate[]
-  favorites     Favorite[]
-}
-
-// ============ SUBJECTS & GRADES ============
 
 model Subject {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  nameEn      String?
-  icon        String?
-  color       String?  // hex color for UI
-  sortOrder   Int      @default(0)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String   @unique
+  nameEn    String?  @map("name_en")
+  icon      String?
+  color     String?
+  sortOrder Int      @default(0) @map("sort_order")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  courses   Course[]
 
-  courses     Course[]
+  @@map("subjects")
 }
 
 model Grade {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  nameEn    String?
-  level     Int      // 1 = أولى ثانوي ... 3 = ثالثة ثانوي
-  sortOrder Int      @default(0)
-  isActive  Boolean  @default(true)
-
-  students  Student[]
+  id        String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name      String    @unique
+  nameEn    String?   @map("name_en")
+  level     Int
+  sortOrder Int       @default(0) @map("sort_order")
+  isActive  Boolean   @default(true) @map("is_active")
   courses   Course[]
+  students  Student[]
+
+  @@map("grades")
 }
 
-// ============ COURSES ============
+model Teacher {
+  id               String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id          String         @unique @db.Uuid
+  title            String?
+  bio              String?
+  specialization   String?
+  years_experience Int?
+  education        String?
+  verified         Boolean        @default(false)
+  approved         Boolean        @default(false)
+  rating           Float          @default(0) @db.Real
+  total_students   Int            @default(0)
+  total_courses    Int            @default(0)
+  total_revenue    Float          @default(0) @db.Real
+  paypal_account   String?
+  bank_account     String?
+  created_at       DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime       @default(now()) @db.Timestamptz(6)
+  announcements    Announcement[]
+  courses          Course[]
+  users            User           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([approved], map: "idx_teachers_approved")
+  @@map("teachers")
+}
+
+model Student {
+  id                String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id           String          @unique @db.Uuid
+  grade_id          String?         @db.Uuid
+  school_name       String?
+  target_year       String?
+  total_spent       Float           @default(0) @db.Real
+  total_courses     Int             @default(0)
+  completed_courses Int             @default(0)
+  data_saver_mode   Boolean         @default(true)
+  created_at        DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime        @default(now()) @db.Timestamptz(6)
+  certificates      Certificate[]
+  enrollments       Enrollment[]
+  favorites         Favorite[]
+  grades            Grade?          @relation(fields: [grade_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users             User            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  watch_progress    WatchProgress[]
+
+  @@map("students")
+}
 
 model Course {
-  id            String   @id @default(cuid())
-  teacherId     String
-  teacher       Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  subjectId     String
-  subject       Subject  @relation(fields: [subjectId], references: [id])
-  gradeId       String?
-  grade         Grade?   @relation(fields: [gradeId], references: [id])
-  title         String
-  slug          String   @unique
-  description   String
-  coverImageUrl String?
-  previewVideoUrl String?
-  price         Float    @default(0)
-  discountPrice Float?
-  discountUntil DateTime?
-  level         CourseLevel @default(BEGINNER)
-  academicYear  String?  // 2024/2025
-  language      String   @default("العربية")
-  isPublished   Boolean  @default(false)
-  isFeatured    Boolean  @default(false)
-  views         Int      @default(0)
-  rating        Float    @default(0)
-  ratingCount   Int      @default(0)
-  studentCount  Int      @default(0)
-  totalLessons  Int      @default(0)
-  totalDuration Int      @default(0) // seconds
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  teacher_id        String         @db.Uuid
+  subject_id        String         @db.Uuid
+  grade_id          String?        @db.Uuid
+  title             String
+  slug              String         @unique
+  description       String
+  cover_image_url   String?
+  preview_video_url String?
+  price             Float          @default(0) @db.Real
+  discount_price    Float?         @db.Real
+  discount_until    DateTime?      @db.Timestamptz(6)
+  level             course_level   @default(BEGINNER)
+  academic_year     String?
+  language          String?        @default("العربية")
+  is_published      Boolean        @default(false)
+  is_featured       Boolean        @default(false)
+  views             Int            @default(0)
+  rating            Float          @default(0) @db.Real
+  rating_count      Int            @default(0)
+  student_count     Int            @default(0)
+  total_lessons     Int            @default(0)
+  total_duration    Int            @default(0)
+  created_at        DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime       @default(now()) @db.Timestamptz(6)
+  announcements     Announcement[]
+  certificates      Certificate[]
+  grades            Grade?         @relation(fields: [grade_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subjects          Subject        @relation(fields: [subject_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  teachers          Teacher        @relation(fields: [teacher_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  enrollments       Enrollment[]
+  favorites         Favorite[]
+  reviews           Review[]
+  sections          Section[]
 
-  sections      Section[]
-  enrollments   Enrollment[]
-  reviews       Review[]
-  favorites     Favorite[]
-  certificates  Certificate[]
+  @@index([is_featured], map: "idx_courses_featured")
+  @@index([grade_id], map: "idx_courses_grade")
+  @@index([is_published], map: "idx_courses_published")
+  @@index([subject_id], map: "idx_courses_subject")
+  @@index([teacher_id], map: "idx_courses_teacher")
+  @@map("courses")
 }
 
-enum CourseLevel {
+model Section {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  course_id   String   @db.Uuid
+  title       String
+  description String?
+  sort_order  Int      @default(0)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  lessons     Lesson[]
+  courses     Course   @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([course_id], map: "idx_sections_course")
+  @@map("sections")
+}
+
+model Lesson {
+  id                 String             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  section_id         String             @db.Uuid
+  title              String
+  description        String?
+  sort_order         Int                @default(0)
+  duration           Int                @default(0)
+  is_preview         Boolean            @default(false)
+  is_published       Boolean            @default(true)
+  created_at         DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime           @default(now()) @db.Timestamptz(6)
+  lesson_attachments LessonAttachment[]
+  sections           Section            @relation(fields: [section_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  quizzes            Quiz[]
+  videos             Video?
+  watch_progress     WatchProgress[]
+
+  @@index([section_id], map: "idx_lessons_section")
+  @@map("lessons")
+}
+
+model Video {
+  id                    String               @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  lesson_id             String               @unique @db.Uuid
+  original_url          String?
+  r2_key                String?
+  hls_playlist_url      String?
+  status                video_status         @default(UPLOADED)
+  duration_480p         Int?
+  duration_720p         Int?
+  size_480p             BigInt?
+  size_720p             BigInt?
+  encryption_key        String?
+  thumbnail_url         String?
+  created_at            DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime             @default(now()) @db.Timestamptz(6)
+  video_processing_jobs VideoProcessingJob[]
+  lessons               Lesson               @relation(fields: [lesson_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("videos")
+}
+
+model VideoProcessingJob {
+  id           String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  video_id     String     @db.Uuid
+  type         job_type
+  status       job_status @default(QUEUED)
+  progress     Int        @default(0)
+  error        String?
+  started_at   DateTime?  @db.Timestamptz(6)
+  completed_at DateTime?  @db.Timestamptz(6)
+  created_at   DateTime   @default(now()) @db.Timestamptz(6)
+  videos       Video      @relation(fields: [video_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([status], map: "idx_jobs_status")
+  @@map("video_processing_jobs")
+}
+
+model LessonAttachment {
+  id              String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  lesson_id       String   @db.Uuid
+  file_name       String
+  file_url        String
+  file_type       String
+  file_size       BigInt
+  is_downloadable Boolean  @default(true)
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  lessons         Lesson   @relation(fields: [lesson_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("lesson_attachments")
+}
+
+model Enrollment {
+  id                     String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  student_id             String    @db.Uuid
+  course_id              String    @db.Uuid
+  user_id                String    @db.Uuid
+  payment_id             String?   @db.Uuid
+  price_paid             Float     @default(0) @db.Real
+  progress               Float     @default(0) @db.Real
+  completed_lessons      Int       @default(0)
+  last_watched_lesson_id String?   @db.Uuid
+  enrolled_at            DateTime  @default(now()) @db.Timestamptz(6)
+  completed_at           DateTime? @db.Timestamptz(6)
+  is_active              Boolean   @default(true)
+  courses                Course    @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  students               Student   @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users                  User      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  payments               Payment[]
+
+  @@unique([student_id, course_id])
+  @@index([course_id], map: "idx_enrollments_course")
+  @@index([student_id], map: "idx_enrollments_student")
+  @@map("enrollments")
+}
+
+model Payment {
+  id            String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id       String         @db.Uuid
+  enrollment_id String?        @db.Uuid
+  amount        Float          @db.Real
+  currency      String         @default("EGP")
+  method        payment_method
+  status        payment_status @default(PENDING)
+  provider_ref  String?
+  teacher_share Float?         @db.Real
+  platform_fee  Float?         @db.Real
+  created_at    DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime       @default(now()) @db.Timestamptz(6)
+  enrollments   Enrollment?    @relation(fields: [enrollment_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users         User           @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([status], map: "idx_payments_status")
+  @@index([user_id], map: "idx_payments_user")
+  @@map("payments")
+}
+
+model WatchProgress {
+  id               String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id          String   @db.Uuid
+  student_id       String   @db.Uuid
+  lesson_id        String   @db.Uuid
+  position         Int      @default(0)
+  duration         Int      @default(0)
+  watched_seconds  Int      @default(0)
+  data_consumed_mb Float    @default(0) @db.Real
+  quality          String   @default("480p")
+  completed        Boolean  @default(false)
+  last_watched_at  DateTime @default(now()) @db.Timestamptz(6)
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @default(now()) @db.Timestamptz(6)
+  lessons          Lesson   @relation(fields: [lesson_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  students         Student  @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users            User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, lesson_id])
+  @@index([user_id], map: "idx_watch_user")
+  @@map("watch_progress")
+}
+
+model Quiz {
+  id            String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  lesson_id     String     @db.Uuid
+  title         String
+  description   String?
+  passing_score Int        @default(60)
+  time_limit    Int?
+  attempts      Int        @default(0)
+  created_at    DateTime   @default(now()) @db.Timestamptz(6)
+  questions     Question[]
+  lessons       Lesson     @relation(fields: [lesson_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("quizzes")
+}
+
+model Question {
+  id          String        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  quiz_id     String        @db.Uuid
+  text        String
+  type        question_type @default(SINGLE_CHOICE)
+  points      Int           @default(1)
+  explanation String?
+  sort_order  Int           @default(0)
+  answers     Answer[]
+  quizzes     Quiz          @relation(fields: [quiz_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("questions")
+}
+
+model Answer {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  question_id String   @db.Uuid
+  text        String
+  is_correct  Boolean  @default(false)
+  sort_order  Int      @default(0)
+  questions   Question @relation(fields: [question_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("answers")
+}
+
+model Review {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id    String   @db.Uuid
+  course_id  String   @db.Uuid
+  rating     Int
+  comment    String?
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  courses    Course   @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, course_id])
+  @@index([course_id], map: "idx_reviews_course")
+  @@map("reviews")
+}
+
+model Favorite {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id    String   @db.Uuid
+  student_id String   @db.Uuid
+  course_id  String   @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  courses    Course   @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  students   Student  @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, course_id])
+  @@map("favorites")
+}
+
+model Certificate {
+  id                 String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id            String   @db.Uuid
+  student_id         String   @db.Uuid
+  course_id          String   @db.Uuid
+  certificate_number String   @unique
+  final_score        Float    @db.Real
+  issued_at          DateTime @default(now()) @db.Timestamptz(6)
+  courses            Course   @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  students           Student  @relation(fields: [student_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users              User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_certificates_user")
+  @@map("certificates")
+}
+
+model Notification {
+  id         String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id    String            @db.Uuid
+  title      String
+  message    String
+  type       notification_type
+  is_read    Boolean           @default(false)
+  link       String?
+  created_at DateTime          @default(now()) @db.Timestamptz(6)
+  users      User              @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id, is_read], map: "idx_notifications_unread")
+  @@index([user_id], map: "idx_notifications_user")
+  @@map("notifications")
+}
+
+model Announcement {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  teacher_id String?  @db.Uuid
+  course_id  String?  @db.Uuid
+  title      String
+  content    String
+  is_pinned  Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  courses    Course?  @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  teachers   Teacher? @relation(fields: [teacher_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("announcements")
+}
+
+model Subscription {
+  id         String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id    String            @db.Uuid
+  plan       subscription_plan
+  status     String            @default("ACTIVE")
+  start_date DateTime          @default(now()) @db.Timestamptz(6)
+  end_date   DateTime          @db.Timestamptz(6)
+  amount     Float             @db.Real
+  auto_renew Boolean           @default(false)
+  created_at DateTime          @default(now()) @db.Timestamptz(6)
+  users      User              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("subscriptions")
+}
+
+enum course_level {
   BEGINNER
   INTERMEDIATE
   ADVANCED
   ALL_LEVELS
 }
 
-// ============ COURSE CONTENT ============
-
-model Section {
-  id          String   @id @default(cuid())
-  courseId    String
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  title       String
-  description String?
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-
-  lessons     Lesson[]
-}
-
-model Lesson {
-  id          String   @id @default(cuid())
-  sectionId   String
-  section     Section  @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  title       String
-  description String?
-  sortOrder   Int      @default(0)
-  duration    Int      @default(0) // seconds
-  isPreview   Boolean  @default(false) // free preview
-  isPublished Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  video       Video?
-  attachments LessonAttachment[]
-  quizzes     Quiz[]
-  watchProgress WatchProgress[]
-}
-
-model Video {
-  id            String   @id @default(cuid())
-  lessonId      String   @unique
-  lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  originalUrl   String?
-  r2Key         String?  // R2 storage key
-  hlsPlaylistUrl String? // .m3u8
-  status        VideoStatus @default(UPLOADED)
-  duration480p  Int?     // seconds
-  duration720p  Int?
-  size480p      Int?     // bytes
-  size720p      Int?
-  encryptionKey String? // HLS encryption key (hex)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  processingJobs VideoProcessingJob[]
-}
-
-enum VideoStatus {
-  UPLOADED
+enum job_status {
+  QUEUED
   PROCESSING
-  READY
+  COMPLETED
   FAILED
 }
 
-model VideoProcessingJob {
-  id          String   @id @default(cuid())
-  videoId     String
-  video       Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
-  type        JobType
-  status      JobStatus @default(QUEUED)
-  progress    Int      @default(0) // 0-100
-  error       String?
-  startedAt   DateTime?
-  completedAt DateTime?
-  createdAt   DateTime @default(now())
-}
-
-enum JobType {
+enum job_type {
   TRANSCODE_480P
   TRANSCODE_720P
   HLS_PACKAGE
@@ -268,204 +480,7 @@ enum JobType {
   THUMBNAIL
 }
 
-enum JobStatus {
-  QUEUED
-  PROCESSING
-  COMPLETED
-  FAILED
-}
-
-model LessonAttachment {
-  id        String   @id @default(cuid())
-  lessonId  String
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  fileName  String
-  fileUrl   String
-  fileType  String   // pdf, docx, etc.
-  fileSize  Int      // bytes
-  isDownloadable Boolean @default(true)
-  createdAt DateTime @default(now())
-}
-
-// ============ ENROLLMENTS & PAYMENTS ============
-
-model Enrollment {
-  id         String   @id @default(cuid())
-  studentId  String
-  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  courseId    String
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  userId     String
-  paymentId  String?
-  pricePaid  Float    @default(0)
-  progress   Float    @default(0) // 0-100
-  completedLessons Int @default(0)
-  lastWatchedLessonId String?
-  enrolledAt DateTime @default(now())
-  completedAt DateTime?
-  isActive   Boolean  @default(true)
-
-  @@unique([studentId, courseId])
-}
-
-model Payment {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id])
-  enrollmentId String?
-  enrollment   Enrollment? @relation(fields: [enrollmentId], references: [id])
-  amount       Float
-  currency     String   @default("EGP")
-  method       PaymentMethod
-  status       PaymentStatus @default(PENDING)
-  providerRef  String?  // provider transaction id
-  teacherShare Float?   // revenue share
-  platformFee  Float?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}
-
-enum PaymentMethod {
-  VODAFONE_CASH
-  ETISALAT_CASH
-  ORANGE_CASH
-  FAWRY
-  CARD
-  INSTAPAY
-}
-
-enum PaymentStatus {
-  PENDING
-  COMPLETED
-  FAILED
-  REFUNDED
-}
-
-// ============ WATCH PROGRESS ============
-
-model WatchProgress {
-  id              String   @id @default(cuid())
-  userId          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  studentId       String
-  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  lessonId        String
-  lesson          Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  position        Int      @default(0) // seconds
-  duration        Int      @default(0) // seconds
-  watchedSeconds  Int      @default(0)
-  dataConsumedMB  Float    @default(0)
-  quality         String   @default("480p")
-  completed       Boolean  @default(false)
-  lastWatchedAt   DateTime @default(now())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  @@unique([userId, lessonId])
-}
-
-// ============ QUIZZES & QUESTIONS ============
-
-model Quiz {
-  id          String   @id @default(cuid())
-  lessonId    String
-  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  title       String
-  description String?
-  passingScore Int     @default(60)
-  timeLimit   Int?     // minutes
-  attempts    Int      @default(0)
-  createdAt   DateTime @default(now())
-
-  questions   Question[]
-}
-
-model Question {
-  id          String   @id @default(cuid())
-  quizId      String
-  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  text        String
-  type        QuestionType @default(SINGLE_CHOICE)
-  points      Int      @default(1)
-  explanation String?
-  sortOrder   Int      @default(0)
-
-  answers     Answer[]
-}
-
-enum QuestionType {
-  SINGLE_CHOICE
-  MULTIPLE_CHOICE
-  TRUE_FALSE
-  TEXT
-}
-
-model Answer {
-  id          String   @id @default(cuid())
-  questionId  String
-  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  text        String
-  isCorrect   Boolean  @default(false)
-  sortOrder   Int      @default(0)
-}
-
-// ============ REVIEWS & FAVORITES ============
-
-model Review {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseId  String
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  rating    Int      // 1-5
-  comment   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, courseId])
-}
-
-model Favorite {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  studentId String
-  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  courseId  String
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-
-  @@unique([userId, courseId])
-}
-
-// ============ CERTIFICATES & NOTIFICATIONS ============
-
-model Certificate {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  studentId    String
-  student      Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  courseId     String
-  course       Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  certificateNumber String @unique
-  finalScore   Float
-  issuedAt     DateTime @default(now())
-}
-
-model Notification {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title     String
-  message   String
-  type      NotificationType
-  isRead    Boolean  @default(false)
-  link      String?
-  createdAt DateTime @default(now())
-}
-
-enum NotificationType {
+enum notification_type {
   INFO
   SUCCESS
   WARNING
@@ -476,32 +491,121 @@ enum NotificationType {
   CERTIFICATE
 }
 
-model Announcement {
-  id        String   @id @default(cuid())
-  teacherId String?
-  teacher   Teacher? @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  courseId   String?
-  title     String
-  content   String
-  isPinned  Boolean  @default(false)
-  createdAt DateTime @default(now())
+enum payment_method {
+  VODAFONE_CASH
+  ETISALAT_CASH
+  ORANGE_CASH
+  FAWRY
+  CARD
+  INSTAPAY
 }
 
-model Subscription {
-  id           String   @id @default(cuid())
-  userId       String
-  plan         SubscriptionPlan
-  status       String   @default("ACTIVE")
-  startDate    DateTime @default(now())
-  endDate      DateTime
-  amount       Float
-  autoRenew    Boolean  @default(false)
-  createdAt    DateTime @default(now())
+enum payment_status {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
 }
 
-enum SubscriptionPlan {
+enum question_type {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  TEXT
+}
+
+enum subscription_plan {
   MONTHLY
   QUARTERLY
   SEMESTER
   YEARLY
 }
+
+enum user_role {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum user_status {
+  ACTIVE
+  PENDING
+  SUSPENDED
+  BANNED
+}
+
+enum video_status {
+  UPLOADED
+  PROCESSING
+  READY
+  FAILED
+}
+
+
+// *** WARNING ***
+// 
+// These fields were enriched with `@map` information taken from the previous Prisma schema:
+//   - Model: "Grade", field: "nameEn"
+//   - Model: "Grade", field: "sortOrder"
+//   - Model: "Grade", field: "isActive"
+//   - Model: "Subject", field: "nameEn"
+//   - Model: "Subject", field: "sortOrder"
+//   - Model: "Subject", field: "isActive"
+//   - Model: "Subject", field: "createdAt"
+// 
+// These models were enriched with `@@map` information taken from the previous Prisma schema:
+//   - "Announcement"
+//   - "Answer"
+//   - "Certificate"
+//   - "Course"
+//   - "Enrollment"
+//   - "Favorite"
+//   - "Grade"
+//   - "LessonAttachment"
+//   - "Lesson"
+//   - "Notification"
+//   - "Payment"
+//   - "Profile"
+//   - "Question"
+//   - "Quiz"
+//   - "Review"
+//   - "Section"
+//   - "Student"
+//   - "Subject"
+//   - "Subscription"
+//   - "Teacher"
+//   - "User"
+//   - "VideoProcessingJob"
+//   - "Video"
+//   - "WatchProgress"
+// 
+// These tables contain row level security, which is not yet fully supported. Read more: https://pris.ly/d/row-level-security
+//   - "Announcement"
+//   - "Answer"
+//   - "Certificate"
+//   - "Course"
+//   - "Enrollment"
+//   - "Favorite"
+//   - "Grade"
+//   - "LessonAttachment"
+//   - "Lesson"
+//   - "Notification"
+//   - "Payment"
+//   - "Profile"
+//   - "Question"
+//   - "Quiz"
+//   - "Review"
+//   - "Section"
+//   - "Student"
+//   - "Subject"
+//   - "Subscription"
+//   - "Teacher"
+//   - "User"
+//   - "VideoProcessingJob"
+//   - "Video"
+//   - "WatchProgress"
+// 
+// These constraints are not supported by Prisma Client, because Prisma currently does not fully support check constraints. Read more: https://pris.ly/d/check-constraints
+//   - Model: "Review", constraint: "reviews_rating_check"
+// 
+

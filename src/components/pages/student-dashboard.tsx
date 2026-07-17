@@ -216,7 +216,7 @@ export function StudentDashboard() {
                         <CardContent className="p-3">
                           <div className="flex gap-3">
                             <div className="relative aspect-video w-32 flex-shrink-0 overflow-hidden rounded-lg sm:w-40">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              { }
                               <img src={course.coverImageUrl} alt={course.title} className="h-full w-full object-cover" />
                               <button
                                 onClick={() => lastLesson && navigate("watch", { courseId: course.id, lessonId: lastLesson.id })}
@@ -319,7 +319,7 @@ export function StudentDashboard() {
                     return (
                       <Card key={course.id} className="card-hover overflow-hidden">
                         <div className="relative aspect-video">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          { }
                           <img src={course.coverImageUrl} alt={course.title} className="h-full w-full object-cover" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                           <div className="absolute bottom-2 right-2 left-2">

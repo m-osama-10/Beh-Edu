@@ -62,7 +62,7 @@ export function CourseCard({ course, variant = "default", className }: CourseCar
         )}
       >
         <div className="relative aspect-video w-32 flex-shrink-0 overflow-hidden rounded-lg sm:w-40">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <img
             src={course.coverImageUrl}
             alt={course.title}
@@ -109,7 +109,7 @@ export function CourseCard({ course, variant = "default", className }: CourseCar
       )}
     >
       <div className="relative aspect-video overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+        { }
         <img
           src={course.coverImageUrl}
           alt={course.title}
@@ -166,7 +166,7 @@ export function CourseCard({ course, variant = "default", className }: CourseCar
         </h3>
 
         <div className="mb-3 flex items-center gap-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <img
             src={course.teacher.avatarUrl}
             alt={course.teacher.name}

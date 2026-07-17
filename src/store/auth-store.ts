@@ -27,7 +27,7 @@ const DEMO_ACCOUNTS: Record<string, { user: User; password: string }> = {
       role: "ADMIN",
       status: "ACTIVE",
       createdAt: new Date("2025-09-01").toISOString(),
-      avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Admin&backgroundColor=0055A4",
+      avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Admin&backgroundColor=1A5F7A",
     },
   },
   "teacher@bakaloriaa-bey.test": {
@@ -39,7 +39,7 @@ const DEMO_ACCOUNTS: Record<string, { user: User; password: string }> = {
       role: "TEACHER",
       status: "ACTIVE",
       createdAt: new Date("2025-08-15").toISOString(),
-      avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Mo&backgroundColor=D7232E",
+      avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Mo&backgroundColor=D62828",
     },
   },
   "student@bakaloriaa-bey.test": {

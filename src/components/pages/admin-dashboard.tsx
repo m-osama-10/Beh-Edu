@@ -163,8 +163,8 @@ export function AdminDashboard() {
                       <AreaChart data={REVENUE_DATA}>
                         <defs>
                           <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#D7232E" stopOpacity={0.4} />
-                            <stop offset="95%" stopColor="#D7232E" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#D62828" stopOpacity={0.4} />
+                            <stop offset="95%" stopColor="#D62828" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -174,7 +174,7 @@ export function AdminDashboard() {
                           contentStyle={{ fontFamily: "Cairo", borderRadius: 8 }}
                           formatter={(value: number) => [value, "طالب"]}
                         />
-                        <Area type="monotone" dataKey="students" stroke="#D7232E" strokeWidth={2} fill="url(#colorUsers)" />
+                        <Area type="monotone" dataKey="students" stroke="#D62828" strokeWidth={2} fill="url(#colorUsers)" />
                       </AreaChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -189,8 +189,8 @@ export function AdminDashboard() {
                       <AreaChart data={REVENUE_DATA}>
                         <defs>
                           <linearGradient id="colorRev2" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#0055A4" stopOpacity={0.4} />
-                            <stop offset="95%" stopColor="#0055A4" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#1A5F7A" stopOpacity={0.4} />
+                            <stop offset="95%" stopColor="#1A5F7A" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -200,7 +200,7 @@ export function AdminDashboard() {
                           contentStyle={{ fontFamily: "Cairo", borderRadius: 8 }}
                           formatter={(value: number) => [formatPrice(value), "الإيرادات"]}
                         />
-                        <Area type="monotone" dataKey="revenue" stroke="#0055A4" strokeWidth={2} fill="url(#colorRev2)" />
+                        <Area type="monotone" dataKey="revenue" stroke="#1A5F7A" strokeWidth={2} fill="url(#colorRev2)" />
                       </AreaChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -417,7 +417,7 @@ export function AdminDashboard() {
                       <tr key={c.id} className="border-t hover:bg-muted/30">
                         <td className="p-3">
                           <div className="flex items-center gap-2">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            { }
                             <img src={c.coverImageUrl} alt={c.title} className="h-10 w-14 rounded object-cover" />
                             <div className="min-w-0">
                               <div className="truncate font-bold text-xs max-w-[200px]">{c.title}</div>

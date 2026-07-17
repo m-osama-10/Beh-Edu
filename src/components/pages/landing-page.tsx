@@ -44,7 +44,7 @@ const FEATURES = [
     title: "فيديوهات محمية بالكامل",
     description:
       "نستخدم تقنية تشفير HLS ومواقع موقعة مؤقتة لمنع تحميل أو مشاركة الفيديوهات. كل طالب يشاهد بعلامة مائية باسمه.",
-    color: "#0055A4",
+    color: "#1A5F7A",
   },
   {
     icon: Leaf,
@@ -65,7 +65,7 @@ const FEATURES = [
     title: "أفضل المدرسين",
     description:
       "نخبة من المدرسين المصريين المعتمدين بخبرات تتجاوز 10 سنوات في تدريس الثانوية العامة. تم اختيارهم بعناية لضمان جودة التعليم.",
-    color: "#D7232E",
+    color: "#D62828",
   },
   {
     icon: Smartphone,
@@ -108,14 +108,14 @@ const TESTIMONIALS = [
   {
     name: "أحمد محمود",
     role: "طالب صف ثالث ثانوي - القاهرة",
-    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Ah&backgroundColor=0055A4",
+    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Ah&backgroundColor=1A5F7A",
     rating: 5,
     text: "بكالوريا بيه غيرت حياتي الدراسية. الكورسات ممتازة وأسعارها مناسبة جداً. خاصية توفير الباقة ساعدتني أكمل دراستي رغم إن باقة الإنترنت عندي صغيرة. أنصح كل زملائي بالمنصة.",
   },
   {
     name: "فاطمة علي",
     role: "طالبة صف ثالث ثانوي - الإسكندرية",
-    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Fa&backgroundColor=D7232E",
+    avatar: "https://api.dicebear.com/7.x/initials/svg?seed=Fa&backgroundColor=D62828",
     rating: 5,
     text: "أ. منى السيد شرحها للنحو رائع جداً. كنت بكره النحو وبقيت بحبه. الفيديوهات بجودة ممتازة وبتستهلك باقة قليلة. حصلت على 95% في امتحان النحو في الفصل الدراسي الأول.",
   },
@@ -492,7 +492,7 @@ export function LandingPage() {
                 <CardContent className="p-6">
                   <Quote className="absolute left-4 top-4 h-8 w-8 text-primary/20" />
                   <div className="mb-4 flex items-center gap-3">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    { }
                     <img src={t.avatar} alt={t.name} className="h-12 w-12 rounded-full" />
                     <div>
                       <div className="font-bold text-foreground">{t.name}</div>

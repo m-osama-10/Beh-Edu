@@ -125,7 +125,7 @@ export function CourseDetailPage() {
         <div className="lg:col-span-2">
           {/* Cover */}
           <div className="relative mb-6 aspect-video overflow-hidden rounded-xl bg-muted">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+            { }
             <img
               src={course.coverImageUrl}
               alt={course.title}

@@ -199,8 +199,8 @@ export function TeacherDashboard() {
                     <AreaChart data={REVENUE_DATA}>
                       <defs>
                         <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#0055A4" stopOpacity={0.4} />
-                          <stop offset="95%" stopColor="#0055A4" stopOpacity={0} />
+                          <stop offset="5%" stopColor="#1A5F7A" stopOpacity={0.4} />
+                          <stop offset="95%" stopColor="#1A5F7A" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
@@ -210,7 +210,7 @@ export function TeacherDashboard() {
                         contentStyle={{ fontFamily: "Cairo", borderRadius: 8, border: "1px solid #E5E7EB" }}
                         formatter={(value: number) => [formatPrice(value), "الإيرادات"]}
                       />
-                      <Area type="monotone" dataKey="revenue" stroke="#0055A4" strokeWidth={2} fill="url(#colorRev)" />
+                      <Area type="monotone" dataKey="revenue" stroke="#1A5F7A" strokeWidth={2} fill="url(#colorRev)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 </CardContent>
@@ -225,7 +225,7 @@ export function TeacherDashboard() {
                   <CardContent className="space-y-2">
                     {teacherCourses.slice(0, 4).map((c) => (
                       <div key={c.id} className="flex items-center gap-3">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        { }
                         <img src={c.coverImageUrl} alt={c.title} className="h-10 w-14 rounded object-cover" />
                         <div className="flex-1 min-w-0">
                           <div className="truncate text-sm font-bold">{c.title}</div>
@@ -303,7 +303,7 @@ export function TeacherDashboard() {
                       <tr key={c.id} className="border-t hover:bg-muted/30">
                         <td className="p-3">
                           <div className="flex items-center gap-2">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            { }
                             <img src={c.coverImageUrl} alt={c.title} className="h-10 w-14 rounded object-cover" />
                             <div className="min-w-0">
                               <div className="truncate font-bold text-xs">{c.title}</div>
@@ -440,7 +440,7 @@ export function TeacherDashboard() {
                         contentStyle={{ fontFamily: "Cairo", borderRadius: 8, border: "1px solid #E5E7EB" }}
                         formatter={(value: number) => [formatPrice(value), "الإيرادات"]}
                       />
-                      <Bar dataKey="revenue" fill="#0055A4" radius={[6, 6, 0, 0]} />
+                      <Bar dataKey="revenue" fill="#1A5F7A" radius={[6, 6, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </CardContent>

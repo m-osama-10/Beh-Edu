@@ -1,21 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Cairo, Tajawal } from "next/font/google";
+import { IBM_Plex_Sans_Arabic } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const cairo = Cairo({
-  variable: "--font-cairo",
+const ibmPlexArabic = IBM_Plex_Sans_Arabic({
+  variable: "--font-ibm-plex-arabic",
   subsets: ["arabic", "latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
-  display: "swap",
-});
-
-const tajawal = Tajawal({
-  variable: "--font-tajawal",
-  subsets: ["arabic", "latin"],
-  weight: ["400", "500", "700", "800", "900"],
+  weight: ["100", "200", "300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -57,7 +50,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0055A4",
+  themeColor: "#1A5F7A",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -72,7 +65,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
-        className={`${cairo.variable} ${tajawal.variable} antialiased bg-background text-foreground font-sans`}
+        className={`${ibmPlexArabic.variable} antialiased bg-background text-foreground font-sans`}
       >
         <ThemeProvider
           attribute="class"

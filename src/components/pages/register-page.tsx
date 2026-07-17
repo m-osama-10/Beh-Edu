@@ -58,7 +58,7 @@ export function RegisterPage() {
       <Card className="w-full max-w-lg">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-gradient">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+            { }
             <img src="/logo.png" alt="بكالوريا بيه" className="h-12 w-12 rounded-lg" />
           </div>
           <CardTitle className="text-2xl">إنشاء حساب جديد</CardTitle>

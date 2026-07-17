@@ -23,7 +23,7 @@ export function Footer() {
           {/* About */}
           <div>
             <div className="mb-4 flex items-center gap-2">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+              { }
               <img src="/logo.png" alt="بكالوريا بيه" className="h-10 w-10 rounded-lg" />
               <div>
                 <div className="text-base font-extrabold text-foreground">

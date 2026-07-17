@@ -11,8 +11,8 @@ import type {
 
 // ============ SUBJECTS ============
 export const SUBJECTS: Subject[] = [
-  { id: "s-1", name: "اللغة العربية", nameEn: "Arabic", icon: "BookOpen", color: "#0055A4", sortOrder: 1, coursesCount: 3 },
-  { id: "s-2", name: "اللغة الإنجليزية", nameEn: "English", icon: "Languages", color: "#D7232E", sortOrder: 2, coursesCount: 2 },
+  { id: "s-1", name: "اللغة العربية", nameEn: "Arabic", icon: "BookOpen", color: "#1A5F7A", sortOrder: 1, coursesCount: 3 },
+  { id: "s-2", name: "اللغة الإنجليزية", nameEn: "English", icon: "Languages", color: "#D62828", sortOrder: 2, coursesCount: 2 },
   { id: "s-3", name: "الرياضيات", nameEn: "Mathematics", icon: "Calculator", color: "#FFD700", sortOrder: 3, coursesCount: 3 },
   { id: "s-4", name: "الفيزياء", nameEn: "Physics", icon: "Atom", color: "#7C3AED", sortOrder: 4, coursesCount: 2 },
   { id: "s-5", name: "الكيمياء", nameEn: "Chemistry", icon: "FlaskConical", color: "#10B981", sortOrder: 5, coursesCount: 2 },
@@ -35,7 +35,7 @@ export const TEACHERS: Teacher[] = [
     userId: "u-teacher-1",
     name: "أ. محمد عبد الله",
     email: "teacher@bakaloriaa-bey.test",
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Mo&backgroundColor=0055A4",
+    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Mo&backgroundColor=1A5F7A",
     title: "أ.",
     bio: "مدرس رياضيات بخبرة تزيد عن 15 عاماً في تدريس الثانوية العامة. خريج كلية التربية - جامعة عين شمس. متخصص في تبسيط المفاهيم الرياضية المعقدة وجعلها سهلة الفهم لجميع الطلاب. أسلوبه يتميز بالشرح الممتع والأمثلة الواقعية التي تربط الرياضيات بحياتنا اليومية، مما يساعد الطلاب على الاستيعاب السريع والثبات في الامتحانات.",
     specialization: "الرياضيات - الصف الثالث الثانوي",
@@ -53,7 +53,7 @@ export const TEACHERS: Teacher[] = [
     userId: "u-teacher-2",
     name: "د. سارة محمود",
     email: "sara@bakaloriaa-bey.test",
-    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Sara&backgroundColor=D7232E",
+    avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Sara&backgroundColor=D62828",
     title: "د.",
     bio: "حاصلة على الدكتوراه في الكيمياء الفيزيائية من جامعة القاهرة. مدرسة كيمياء للثانوية العامة بخبرة 12 عاماً. تتميز بأسلوبها العلمي الدقيق وقدرتها على ربط الكيمياء النظرية بالتطبيقات العملية الصناعية والطبية. حاصلة على جائزة التميز العلمي من وزارة التربية والتعليم عام 2023.",
     specialization: "الكيمياء - الصف الثاني والثالث الثانوي",
@@ -730,8 +730,8 @@ export const PLATFORM_STATS = {
 
 // ============ USERS MOCK (for admin) ============
 export const USERS_MOCK = [
-  { id: "u-admin-1", name: "مدير المنصة", email: "admin@bakaloriaa-bey.test", role: "ADMIN" as const, status: "ACTIVE" as const, createdAt: "2025-09-01T10:00:00Z", avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Admin&backgroundColor=0055A4" },
-  { id: "u-teacher-1", name: "أ. محمد عبد الله", email: "teacher@bakaloriaa-bey.test", role: "TEACHER" as const, status: "ACTIVE" as const, createdAt: "2025-08-15T10:00:00Z", avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Mo&backgroundColor=D7232E" },
+  { id: "u-admin-1", name: "مدير المنصة", email: "admin@bakaloriaa-bey.test", role: "ADMIN" as const, status: "ACTIVE" as const, createdAt: "2025-09-01T10:00:00Z", avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Admin&backgroundColor=1A5F7A" },
+  { id: "u-teacher-1", name: "أ. محمد عبد الله", email: "teacher@bakaloriaa-bey.test", role: "TEACHER" as const, status: "ACTIVE" as const, createdAt: "2025-08-15T10:00:00Z", avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Mo&backgroundColor=D62828" },
   { id: "u-student-1", name: "أحمد محمود", email: "student@bakaloriaa-bey.test", role: "STUDENT" as const, status: "ACTIVE" as const, createdAt: "2025-09-10T10:00:00Z", avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Ah&backgroundColor=FFD700" },
   { id: "u-2", name: "فاطمة علي", email: "fatma@email.com", role: "STUDENT" as const, status: "ACTIVE" as const, createdAt: "2025-09-12T10:00:00Z", avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Fa" },
   { id: "u-3", name: "محمود السيد", email: "mahmoud@email.com", role: "STUDENT" as const, status: "ACTIVE" as const, createdAt: "2025-09-15T10:00:00Z", avatarUrl: "https://api.dicebear.com/7.x/initials/svg?seed=Ma" },
@@ -762,8 +762,8 @@ export const REVENUE_DATA = [
 
 export const ENROLLMENT_BY_SUBJECT = [
   { subject: "الرياضيات", students: 2840, color: "#FFD700" },
-  { subject: "اللغة العربية", students: 2420, color: "#0055A4" },
-  { subject: "اللغة الإنجليزية", students: 2180, color: "#D7232E" },
+  { subject: "اللغة العربية", students: 2420, color: "#1A5F7A" },
+  { subject: "اللغة الإنجليزية", students: 2180, color: "#D62828" },
   { subject: "الكيمياء", students: 1640, color: "#10B981" },
   { subject: "الفيزياء", students: 1320, color: "#7C3AED" },
   { subject: "الأحياء", students: 980, color: "#F59E0B" },

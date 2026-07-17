@@ -92,7 +92,7 @@ export function Header() {
             <SheetHeader>
               <SheetTitle className="text-right">
                 <div className="flex items-center gap-2">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  { }
                   <img src="/logo.png" alt="بكالوريا بيه" className="h-10 w-10 rounded-lg" />
                   <span className="font-bold">بكالوريا بيه</span>
                 </div>
@@ -140,7 +140,7 @@ export function Header() {
           onClick={() => navigate("home")}
           className="flex items-center gap-2 transition hover:opacity-80"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          { }
           <img src="/logo.png" alt="بكالوريا بيه" className="h-10 w-10 rounded-lg sm:h-11 sm:w-11" />
           <div className="hidden text-right sm:block">
             <div className="text-base font-extrabold leading-tight text-foreground">
