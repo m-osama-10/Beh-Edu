@@ -79,3 +79,24 @@ prisma/migrations/dev.db*
 # Temp/upload
 /tmp/
 upload/
+
+# Local DB (SQLite dev file)
+/db/
+
+# Download directory (user deliverables)
+/download/
+
+# Screenshots (local only)
+/*.png
+
+# Examples (internal)
+/examples/
+
+# Mini-services (internal)
+/mini-services/
+
+# Worklog (internal)
+worklog.md
+
+# Caddy config (internal)
+Caddyfile
